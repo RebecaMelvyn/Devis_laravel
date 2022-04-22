@@ -4,30 +4,47 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-
-    <a href="{{ route('auth.redirect') }}">Login</a>
-
+    <div class="contain_btn">
+    <a class="btn blue" href="{{ route('auth.redirect') }}">Login</a>
+    </div>
     <div class="message">
         @auth
-            Bonjour {{ Auth::user()->name }} !
+            Bonjour {{ Auth::user()->name }} !<br/><br/>
+
+            <a style="margin-top: 50px;" class="btn red" href="{{ route('auth.signout') }}">LogOut</a>
         @endauth
     </div>
 
     <body class="antialiased">
-        <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
-            @if (Route::has('login'))
-                <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
-                    @auth
-                        <a href="{{ url('/home') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Home</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-        </div>
     </body>
 </html>
+<style>
+    .contain_btn{
+        margin-top: 5%;
+    }
+    .red{
+        background-color: red;
+    }
+    .blue{
+        background-color: blue;
+        display: table;
+        margin: 0 auto;
+    }
+    .btn{
+        margin-top: 5%;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        padding-right: 2%;
+        padding-left: 2%;
+        border: 0px;
+        color: white;
+        text-decoration: none;
+        border-radius: 15px;
+        transition: all 0.4s;
+    }
+    .btn:hover{
+        cursor: pointer;
+        padding: 1%;
+    }
+</style>

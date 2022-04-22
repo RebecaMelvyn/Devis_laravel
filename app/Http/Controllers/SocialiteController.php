@@ -2,37 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+
+
 
 class SocialiteController extends Controller
 {
-    //
-    protected string $providers = "github";
 
-    public function loginRegister (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function redirect()
     {
-        return view("auth.login-register");
+        return Socialite::driver('github')->redirect();
     }
 
-    public function redirect (Request $request) {
-        $provider = $request->provider;
+    public function callback()
+    {
+        $githubUser = Socialite::driver('github')->user();
 
-        if (in_array($provider, (array)$this->providers)) {
-            return Socialite::driver($provider)->redirect();
+        $user = User::updateOrCreate([
+            'github_id' => $githubUser->id,
+        ], [
+            'name' => $githubUser->nickname,
+            'email' => $githubUser->email,
+            'avatar_url' => $githubUser->avatar,
+        ]);
+
+        Auth::login($user);
+
+        if (Auth::user()->email = null || Auth::user()->email_public = null || Auth::user()->address = null || Auth::user()->phone = null || Auth::user()->iban = null){
+
+        return redirect('/auth/register');
         }
-        abort(404);
+
+    else{
+            return redirect('/dashboard');
+
     }
 
-    public function callback (Request $request) {
-        $provider = $request->provider;
 
-        if (in_array($provider, (array)$this->providers)) {
 
-            $data = Socialite::driver($request->provider)->user();
-            $user = $data->user;
-            dd($user);
-        }
-        abort(404);
     }
+
+    public function signOut() {
+        Auth::logout();
+        return redirect(route('welcome'));
+    }
+
+    public function update(UpdateUserRequest $request)
+    {
+        $input = $request->only(['name', 'email', 'email_public', 'address', 'phone', 'avatar_url', 'iban', 'rib', 'bic', 'account_holder', 'domiciliation', 'mentions']);
+
+        Auth::user()->update($input);
+        return redirect()->route('dashboard');
+    }
+
+    public function register()
+    {
+        return view("register");
+    }
+
 }
